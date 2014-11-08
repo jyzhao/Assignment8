@@ -1,21 +1,21 @@
-package UserInterface.ShippingSpecialistRole;
+package UserInterface.SupplierRole;
 
 import UserInterface.CustomerRole.*;
 import Business.Business;
 import Business.Organization.SalesSpecialistOrganization;
 import Business.Organization.Organization;
 import Business.UserAccount.UserAccount;
-import Business.WorkQueue.LabTestWorkRequest;
+import Business.WorkQueue.EnrollmentWorkRequest;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
 
-public class RequestLabTestJPanel extends javax.swing.JPanel {
+public class RequestEnrollmentJPanel extends javax.swing.JPanel {
 
     JPanel upc;
     UserAccount ua;
     Business business;
     
-    public RequestLabTestJPanel(JPanel upc,UserAccount ua, Business business) {
+    public RequestEnrollmentJPanel(JPanel upc,UserAccount ua, Business business) {
         initComponents();
         this.upc = upc;
         this.ua = ua;
@@ -31,15 +31,15 @@ public class RequestLabTestJPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        requestTestJButton = new javax.swing.JButton();
+        requestEnrollmentJButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         messageJTextField = new javax.swing.JTextField();
         backJButton = new javax.swing.JButton();
 
-        requestTestJButton.setText("Request Test");
-        requestTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        requestEnrollmentJButton.setText("Request Enrollment");
+        requestEnrollmentJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                requestTestJButtonActionPerformed(evt);
+                requestEnrollmentJButtonActionPerformed(evt);
             }
         });
 
@@ -58,7 +58,7 @@ public class RequestLabTestJPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(requestTestJButton)
+                .addComponent(requestEnrollmentJButton)
                 .addGap(84, 84, 84))
             .addGroup(layout.createSequentialGroup()
                 .addGap(69, 69, 69)
@@ -77,22 +77,22 @@ public class RequestLabTestJPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(messageJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(36, 36, 36)
-                .addComponent(requestTestJButton)
+                .addComponent(requestEnrollmentJButton)
                 .addGap(18, 18, 18)
                 .addComponent(backJButton)
                 .addContainerGap(143, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void requestTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestTestJButtonActionPerformed
+    private void requestEnrollmentJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestEnrollmentJButtonActionPerformed
 
         String message = messageJTextField.getText();
         
-        LabTestWorkRequest ltwr = new LabTestWorkRequest();
-        ltwr.setMessage(message);
-        ltwr.setSender(ua);
-        ltwr.setStatus("SENT");
-        ltwr.setTestResult("Waiting");
+        EnrollmentWorkRequest enrollReq = new EnrollmentWorkRequest();
+        enrollReq.setMessage(message);
+        enrollReq.setSender(ua);
+        enrollReq.setStatus("SENT");
+        enrollReq.setEnrollmentResult("Waiting");
         
         Organization foundOrg = null;
         for (Organization org : business.getOrganizationDirectory().getOrganizationList()) {
@@ -102,10 +102,10 @@ public class RequestLabTestJPanel extends javax.swing.JPanel {
             }
         }
         if (foundOrg != null) {
-            foundOrg.getWorkQueue().getWorkRequestList().add(ltwr);
-            ua.getWorkQueue().getWorkRequestList().add(ltwr);
+            foundOrg.getWorkQueue().getWorkRequestList().add(enrollReq);
+            ua.getWorkQueue().getWorkRequestList().add(enrollReq);
         }
-    }//GEN-LAST:event_requestTestJButtonActionPerformed
+    }//GEN-LAST:event_requestEnrollmentJButtonActionPerformed
 
     private void backJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backJButtonActionPerformed
 
@@ -118,6 +118,6 @@ public class RequestLabTestJPanel extends javax.swing.JPanel {
     private javax.swing.JButton backJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField messageJTextField;
-    private javax.swing.JButton requestTestJButton;
+    private javax.swing.JButton requestEnrollmentJButton;
     // End of variables declaration//GEN-END:variables
 }

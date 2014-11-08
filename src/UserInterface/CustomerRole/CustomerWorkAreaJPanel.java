@@ -1,55 +1,53 @@
-
 package UserInterface.CustomerRole;
 
 import Business.Business;
-import Business.Organization.CustomerOrganization;
+import Business.Employee.Employee;
+import Business.Order.Order;
+import Business.Organization.Organization;
+import Business.Organization.OrganizationDirectory;
+import Business.Organization.SupplierOrganization;
+import Business.Product.Product;
 import Business.UserAccount.UserAccount;
-import Business.WorkQueue.LabTestWorkRequest;
-import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author raunak
+ * @author Administrator
  */
 public class CustomerWorkAreaJPanel extends javax.swing.JPanel {
 
     JPanel userProcessContainer;
-    UserAccount ua;
-    CustomerOrganization org;
+    OrganizationDirectory organizationDirectory;
+    UserAccount account;
+    Organization organization;
     Business business;
-    
-    public CustomerWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, CustomerOrganization organization, Business business) {
+
+    public CustomerWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, Organization organization, Business business) {
         initComponents();
         this.userProcessContainer = userProcessContainer;
-        this.ua = account;
-        this.org = org;
+        this.organizationDirectory = business.getOrganizationDirectory();
+        this.account = account;
+        this.organization = organization;
         this.business = business;
-    
-        displayWorkRequest();
+        
+        populateSupplier(organizationDirectory);
     }
 
-    private void displayWorkRequest(){
-        DefaultTableModel dtm = (DefaultTableModel) workRequestJTable.getModel();
-        dtm.setRowCount(0);
-        
-        for (WorkRequest wr : ua.getWorkQueue().getWorkRequestList()) {
-            Object row[] = new Object[4];
-            row[0] = wr.getMessage();
-            row[1] = wr.getReceiver();
-            row[2] = wr.getStatus();
-            
-            LabTestWorkRequest labReq = (LabTestWorkRequest) wr;
-            String result = labReq.getTestResult();
-            row[3] = (result == null) ? ("N/A") : (result);
-            
-            dtm.addRow(row);
-            
+    private void populateSupplier(OrganizationDirectory organizationDirectory) {
+        employeeJComboBox.removeAllItems();
+        for (Organization org : organizationDirectory.getOrganizationList()) {
+            if (org instanceof SupplierOrganization) {
+                for (Employee emp : org.getEmployeeDirectory().getEmployeeList()) {
+                    employeeJComboBox.addItem(emp);
+                }
+            }
+
         }
+
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -59,13 +57,55 @@ public class CustomerWorkAreaJPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        workRequestJTable = new javax.swing.JTable();
-        requestTestJButton = new javax.swing.JButton();
-        refreshTestJButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        employeeJComboBox = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
+        checkoutJButton = new javax.swing.JButton();
+        viewProductDetailJButton = new javax.swing.JButton();
+        addToCartJButton = new javax.swing.JButton();
+        quantityJSpinner = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        orderJTable = new javax.swing.JTable();
+        viewOrderItemDetailJButton = new javax.swing.JButton();
+        searchByProductNameJTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        searchByProductNameJButton = new javax.swing.JButton();
+        modifyQuantityJTextField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        productDetailJTable = new javax.swing.JTable();
+        removeItemJButton = new javax.swing.JButton();
 
-        workRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+        jLabel3.setText("Supplier");
+
+        jLabel1.setText("Customer Work Area");
+
+        checkoutJButton.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        checkoutJButton.setText("Checkout");
+        checkoutJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkoutJButtonActionPerformed(evt);
+            }
+        });
+
+        viewProductDetailJButton.setText("View Product Detail");
+        viewProductDetailJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewProductDetailJButtonActionPerformed(evt);
+            }
+        });
+
+        addToCartJButton.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        addToCartJButton.setText("Add to cart");
+        addToCartJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addToCartJButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Quantity");
+
+        orderJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -73,100 +113,321 @@ public class CustomerWorkAreaJPanel extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "Message", "Receiver", "Status", "Result"
+                "Name", "Price", "Quantity", "Total Price"
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, true
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(workRequestJTable);
-        if (workRequestJTable.getColumnModel().getColumnCount() > 0) {
-            workRequestJTable.getColumnModel().getColumn(0).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(1).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(2).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(3).setResizable(false);
-        }
+        jScrollPane2.setViewportView(orderJTable);
 
-        requestTestJButton.setText("Request Test");
-        requestTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        viewOrderItemDetailJButton.setText("View Order Item Detail");
+        viewOrderItemDetailJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                requestTestJButtonActionPerformed(evt);
+                viewOrderItemDetailJButtonActionPerformed(evt);
             }
         });
 
-        refreshTestJButton.setText("Refresh");
-        refreshTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Modify Quantity");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshTestJButtonActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("Customer Role");
+        searchByProductNameJButton.setText("Search By Product Name");
+        searchByProductNameJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchByProductNameJButtonActionPerformed(evt);
+            }
+        });
+
+        productDetailJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Product Name", "Product ID", "Product Price", "Product Availability"
+            }
+        ));
+        jScrollPane1.setViewportView(productDetailJTable);
+
+        removeItemJButton.setText("Remove Item");
+        removeItemJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeItemJButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(192, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(165, 165, 165))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(requestTestJButton)
-                        .addGap(86, 86, 86))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(139, 139, 139)
-                        .addComponent(refreshTestJButton)
-                        .addGap(103, 103, 103))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(employeeJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(262, 262, 262)
+                        .addComponent(jLabel1)))
+                .addContainerGap(403, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(38, 38, 38)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jScrollPane1)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(369, 369, 369)
+                                    .addComponent(searchByProductNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(searchByProductNameJButton)))
+                            .addGap(62, 62, 62))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(checkoutJButton)
+                            .addGap(358, 358, 358))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(71, 71, 71)
+                                    .addComponent(viewProductDetailJButton)
+                                    .addGap(45, 45, 45)
+                                    .addComponent(jLabel2)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(quantityJSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(38, 38, 38)
+                                    .addComponent(addToCartJButton))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(67, 67, 67)
+                                    .addComponent(viewOrderItemDetailJButton)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(modifyQuantityJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jButton1)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(removeItemJButton)))
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(jScrollPane2)
+                            .addGap(39, 39, 39)))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(refreshTestJButton)
-                    .addComponent(jLabel1))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(requestTestJButton)
-                .addContainerGap(183, Short.MAX_VALUE))
+                .addGap(34, 34, 34)
+                .addComponent(jLabel1)
+                .addGap(13, 13, 13)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(employeeJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(526, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(81, 81, 81)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchByProductNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchByProductNameJButton))
+                    .addGap(18, 18, 18)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(30, 30, 30)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(viewProductDetailJButton)
+                        .addComponent(addToCartJButton)
+                        .addComponent(quantityJSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2))
+                    .addGap(18, 18, 18)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(18, 18, 18)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(viewOrderItemDetailJButton)
+                        .addComponent(jButton1)
+                        .addComponent(modifyQuantityJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(removeItemJButton))
+                    .addGap(18, 18, 18)
+                    .addComponent(checkoutJButton)
+                    .addContainerGap(81, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void requestTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestTestJButtonActionPerformed
+    private void checkoutJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkoutJButtonActionPerformed
+        // TODO add your handling code here:
+//        Order addedOrder = masterOrderCatalog.addOrder(order);
+//        if (addedOrder != null) {
+//            order = new Order();
+//            JOptionPane.showMessageDialog(null, "Your order has been checked out !!!");
+//        } else {
+//            return;
+//        }
+//
+//        populateOrderTable(order);
+//        populateProductDetailTable();
+    }//GEN-LAST:event_checkoutJButtonActionPerformed
 
-        RequestLabTestJPanel rltjp = new RequestLabTestJPanel(userProcessContainer,ua,Business.getInstance());
-        userProcessContainer.add("ReqTestJP",rltjp);
+    private void viewProductDetailJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewProductDetailJButtonActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = productDetailJTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(null, "Please select a row !!!");
+            return;
+        }
+
+        //Product product = (Product) productDetailJTable.getValueAt(selectedRow, 0);
+
+        ViewProductDetailJPanel vpdjp = new ViewProductDetailJPanel(userProcessContainer/*, product*/);
+        userProcessContainer.add("ViewProductDetailJPanel", vpdjp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
-    }//GEN-LAST:event_requestTestJButtonActionPerformed
+    }//GEN-LAST:event_viewProductDetailJButtonActionPerformed
 
-    private void refreshTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshTestJButtonActionPerformed
+    private void addToCartJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addToCartJButtonActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = productDetailJTable.getSelectedRow();
+        boolean flag = true;
 
-        displayWorkRequest();
-    }//GEN-LAST:event_refreshTestJButtonActionPerformed
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(null, "Please select a row !!!");
+            return;
+        }
+        Product product = (Product) productDetailJTable.getValueAt(selectedRow, 0);
+        int quantity = (Integer) (quantityJSpinner.getValue());
+
+//        if (order == null) {
+//            order = new Order();
+//
+//        } else {
+//            ArrayList<OrderItem> oi = order.getOrderItemList();
+//            for (OrderItem orderItem : oi) {
+//                if (orderItem.getProduct().equals(product)) {
+//                    int oldQuantity = orderItem.getQuantity();
+//                    int newQuantity = oldQuantity + quantity;
+//                    orderItem.setQuantity(newQuantity);
+//                    flag = false;
+//                }
+//
+//            }
+//        }
+
+        if (flag) {
+            //OrderItem oi = order.addOrderItem(product, quantity);
+
+        }
+
+        if (quantity == 0 || quantity > product.getAvailability()) {
+            JOptionPane.showMessageDialog(null, "Somthing wrong with quantity !!!");
+            return;
+        }
+
+        product.setAvailability(product.getAvailability() - quantity);
+
+        JOptionPane.showMessageDialog(null, product.getProdName() + " " + "Quantity " + quantity + " is added to cart !!!");
+//        populateProductDetailTable();
+//        populateOrderTable(order);
+    }//GEN-LAST:event_addToCartJButtonActionPerformed
+
+    private void viewOrderItemDetailJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewOrderItemDetailJButtonActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = orderJTable.getSelectedRow();
+        if (selectedRow < 0) {
+            return;
+        }
+
+        //OrderItem oi = (OrderItem) orderJTable.getValueAt(selectedRow, 0);
+
+        ViewOrderItemDetailJPanel voidjp = new ViewOrderItemDetailJPanel(userProcessContainer/*, oi*/);
+        userProcessContainer.add("ViewProductDetailJPanel", voidjp);
+        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_viewOrderItemDetailJButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = orderJTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(null, "Please select a row !!!");
+            return;
+        }
+
+        //OrderItem oi = (OrderItem) orderJTable.getValueAt(selectedRow, 0);
+
+        int modifyQuantity = Integer.parseInt(modifyQuantityJTextField.getText());
+
+//        if (modifyQuantity > (oi.getQuantity() + oi.getProduct().getAvailability())) {
+//            JOptionPane.showMessageDialog(null, "Wrong quantity !!!");
+//            return;
+//        }
+
+        if (modifyQuantity <= 0) {
+            JOptionPane.showMessageDialog(null, "Invalid quantity !!!");
+            return;
+        }
+
+//        int oldQuantity = oi.getQuantity();
+//        int oldAvailability = oi.getProduct().getAvailability();
+//        oi.getProduct().setAvailability(oldQuantity + oldAvailability - modifyQuantity);
+//        oi.setQuantity(modifyQuantity);
+//
+//        populateProductDetailTable();
+//        populateOrderTable(order);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void searchByProductNameJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchByProductNameJButtonActionPerformed
+        // TODO add your handling code here:
+        String keyword = searchByProductNameJTextField.getText();
+        //populateSearchedProduct(keyword);
+    }//GEN-LAST:event_searchByProductNameJButtonActionPerformed
+
+    private void removeItemJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeItemJButtonActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = orderJTable.getSelectedRow();
+        if (selectedRow < 0) {
+            return;
+        }
+
+        //OrderItem oi = (OrderItem) orderJTable.getValueAt(selectedRow, 0);
+
+        //order.deleteOrderItem(oi);
+
+//        int newAvailability = oi.getQuantity() + oi.getProduct().getAvailability();
+//
+//        oi.getProduct().setAvailability(newAvailability);
+//
+//        populateProductDetailTable();
+//        populateOrderTable(order);
+    }//GEN-LAST:event_removeItemJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addToCartJButton;
+    private javax.swing.JButton checkoutJButton;
+    private javax.swing.JComboBox employeeJComboBox;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton refreshTestJButton;
-    private javax.swing.JButton requestTestJButton;
-    private javax.swing.JTable workRequestJTable;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField modifyQuantityJTextField;
+    private javax.swing.JTable orderJTable;
+    private javax.swing.JTable productDetailJTable;
+    private javax.swing.JSpinner quantityJSpinner;
+    private javax.swing.JButton removeItemJButton;
+    private javax.swing.JButton searchByProductNameJButton;
+    private javax.swing.JTextField searchByProductNameJTextField;
+    private javax.swing.JButton viewOrderItemDetailJButton;
+    private javax.swing.JButton viewProductDetailJButton;
     // End of variables declaration//GEN-END:variables
 }

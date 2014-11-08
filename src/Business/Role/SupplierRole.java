@@ -1,11 +1,9 @@
 package Business.Role;
 
 import Business.Business;
-import Business.Organization.CustomerOrganization;
 import Business.Organization.Organization;
 import Business.Organization.SupplierOrganization;
 import Business.UserAccount.UserAccount;
-import UserInterface.CustomerRole.CustomerWorkAreaJPanel;
 import UserInterface.SupplierRole.SupplierWorkAreaJPanel;
 import javax.swing.JPanel;
 

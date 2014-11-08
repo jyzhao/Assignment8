@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package UserInterface.SalesSpecialistRole;
+package UserInterface.ShippingSpecialistRole;
 
-import Business.WorkQueue.LabTestWorkRequest;
+import UserInterface.SalesSpecialistRole.*;
+import Business.WorkQueue.ShipmentWorkRequest;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
 
@@ -12,14 +13,14 @@ import javax.swing.JPanel;
  *
  * @author raunak
  */
-public class ProcessWorkRequestJPanel extends javax.swing.JPanel {
+public class ProcessShippingRequestJPanel extends javax.swing.JPanel {
 
     JPanel userProcessContainer;
-    LabTestWorkRequest request;
+    ShipmentWorkRequest request;
     /**
      * Creates new form ProcessWorkRequestJPanel
      */
-    public ProcessWorkRequestJPanel(JPanel userProcessContainer, LabTestWorkRequest request) {
+    public ProcessShippingRequestJPanel(JPanel userProcessContainer, ShipmentWorkRequest request) {
         initComponents();
         this.userProcessContainer = userProcessContainer;
         this.request = request;
@@ -97,8 +98,8 @@ public class ProcessWorkRequestJPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backJButtonActionPerformed
 
     private void submitJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitJButtonActionPerformed
-        request.setTestResult(resultJTextField.getText());
-        request.setStatus("Completed");
+        request.setShipmentResult(resultJTextField.getText());
+        request.setStatus("Shipped");
     }//GEN-LAST:event_submitJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

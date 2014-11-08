@@ -1,57 +1,49 @@
-
 package UserInterface.ShippingSpecialistRole;
 
-import UserInterface.CustomerRole.*;
+import UserInterface.SalesSpecialistRole.*;
 import Business.Business;
-import Business.Organization.CustomerOrganization;
+import Business.Organization.SalesSpecialistOrganization;
+import Business.Organization.Organization;
 import Business.Organization.ShippingSpecialistOrganization;
 import Business.UserAccount.UserAccount;
-import Business.WorkQueue.LabTestWorkRequest;
+import Business.WorkQueue.ShipmentWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author raunak
- */
 public class ShippingSpecialistWorkAreaJPanel extends javax.swing.JPanel {
 
     JPanel userProcessContainer;
     UserAccount ua;
-    CustomerOrganization org;
+    ShippingSpecialistOrganization shippingOrg;
     Business business;
-    
+
     public ShippingSpecialistWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, ShippingSpecialistOrganization organization, Business business) {
         initComponents();
         this.userProcessContainer = userProcessContainer;
         this.ua = account;
-        this.org = org;
+        this.shippingOrg = organization;
         this.business = business;
-    
-        displayWorkRequest();
+
+        populateShipmentRequest();
     }
 
-    private void displayWorkRequest(){
-        DefaultTableModel dtm = (DefaultTableModel) workRequestJTable.getModel();
+    private void populateShipmentRequest() {
+        DefaultTableModel dtm = (DefaultTableModel) shipmentRequestJTable.getModel();
         dtm.setRowCount(0);
-        
-        for (WorkRequest wr : ua.getWorkQueue().getWorkRequestList()) {
+
+        for (WorkRequest wr : shippingOrg.getWorkQueue().getWorkRequestList()) {
             Object row[] = new Object[4];
-            row[0] = wr.getMessage();
-            row[1] = wr.getReceiver();
-            row[2] = wr.getStatus();
-            
-            LabTestWorkRequest labReq = (LabTestWorkRequest) wr;
-            String result = labReq.getTestResult();
-            row[3] = (result == null) ? ("N/A") : (result);
-            
+            row[0] = wr;
+            row[1] = wr.getSender().getEmployee().getName();
+            row[2] = (wr.getReceiver() == null) ? ("N/A") : (wr.getReceiver().getEmployee().getName());
+            row[3] = wr.getStatus();
+
             dtm.addRow(row);
-            
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -62,12 +54,13 @@ public class ShippingSpecialistWorkAreaJPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        workRequestJTable = new javax.swing.JTable();
-        requestTestJButton = new javax.swing.JButton();
-        refreshTestJButton = new javax.swing.JButton();
+        shipmentRequestJTable = new javax.swing.JTable();
+        assignJButton = new javax.swing.JButton();
+        processJButton = new javax.swing.JButton();
+        refreshJButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        workRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+        shipmentRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -75,14 +68,14 @@ public class ShippingSpecialistWorkAreaJPanel extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
-                "Message", "Receiver", "Status", "Result"
+                "Message", "Sender", "Receiver", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -93,25 +86,32 @@ public class ShippingSpecialistWorkAreaJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(workRequestJTable);
-        if (workRequestJTable.getColumnModel().getColumnCount() > 0) {
-            workRequestJTable.getColumnModel().getColumn(0).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(1).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(2).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(3).setResizable(false);
+        jScrollPane1.setViewportView(shipmentRequestJTable);
+        if (shipmentRequestJTable.getColumnModel().getColumnCount() > 0) {
+            shipmentRequestJTable.getColumnModel().getColumn(0).setResizable(false);
+            shipmentRequestJTable.getColumnModel().getColumn(1).setResizable(false);
+            shipmentRequestJTable.getColumnModel().getColumn(2).setResizable(false);
+            shipmentRequestJTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        requestTestJButton.setText("Request Test");
-        requestTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        assignJButton.setText("Assign to me");
+        assignJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                requestTestJButtonActionPerformed(evt);
+                assignJButtonActionPerformed(evt);
             }
         });
 
-        refreshTestJButton.setText("Refresh");
-        refreshTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        processJButton.setText("Process");
+        processJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                refreshTestJButtonActionPerformed(evt);
+                processJButtonActionPerformed(evt);
+            }
+        });
+
+        refreshJButton.setText("Refresh");
+        refreshJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshJButtonActionPerformed(evt);
             }
         });
 
@@ -122,53 +122,79 @@ public class ShippingSpecialistWorkAreaJPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(192, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(108, 108, 108)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(62, 62, 62)
+                                .addComponent(refreshJButton))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(165, 165, 165))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(requestTestJButton)
-                        .addGap(86, 86, 86))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(102, 102, 102)
-                        .addComponent(refreshTestJButton)
-                        .addGap(103, 103, 103))))
+                        .addGap(100, 100, 100)
+                        .addComponent(assignJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(processJButton)))
+                .addContainerGap(172, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(refreshTestJButton)
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(refreshJButton)
                     .addComponent(jLabel1))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(requestTestJButton)
-                .addContainerGap(183, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(assignJButton)
+                    .addComponent(processJButton))
+                .addContainerGap(244, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void requestTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestTestJButtonActionPerformed
+    private void assignJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignJButtonActionPerformed
 
-        RequestLabTestJPanel rltjp = new RequestLabTestJPanel(userProcessContainer,ua,Business.getInstance());
-        userProcessContainer.add("ReqTestJP",rltjp);
-        CardLayout layout = (CardLayout) userProcessContainer.getLayout();
-        layout.next(userProcessContainer);
-    }//GEN-LAST:event_requestTestJButtonActionPerformed
+        ShipmentWorkRequest shipmentReq;
+        int selectedRow = shipmentRequestJTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            shipmentReq = (ShipmentWorkRequest) shipmentRequestJTable.getValueAt(selectedRow, 0);
+            shipmentReq.setReceiver(ua);
+            shipmentReq.setStatus("Pending");
+            populateShipmentRequest();
+        }
+    }//GEN-LAST:event_assignJButtonActionPerformed
 
-    private void refreshTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshTestJButtonActionPerformed
+    private void processJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processJButtonActionPerformed
 
-        displayWorkRequest();
-    }//GEN-LAST:event_refreshTestJButtonActionPerformed
+        ShipmentWorkRequest shipmentReq;
+        int selectedRow = shipmentRequestJTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            if (selectedRow >= 0) {
+                shipmentReq = (ShipmentWorkRequest) shipmentRequestJTable.getValueAt(selectedRow, 0);
+                shipmentReq.setStatus("Processing");
+
+                ProcessShippingRequestJPanel psrjp = new ProcessShippingRequestJPanel(userProcessContainer, shipmentReq);
+                userProcessContainer.add("ProcessShipJP", psrjp);
+                CardLayout layout = (CardLayout) userProcessContainer.getLayout();
+                layout.next(userProcessContainer);
+            }
+        }
+    }//GEN-LAST:event_processJButtonActionPerformed
+
+    private void refreshJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshJButtonActionPerformed
+
+        populateShipmentRequest();
+    }//GEN-LAST:event_refreshJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton assignJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton refreshTestJButton;
-    private javax.swing.JButton requestTestJButton;
-    private javax.swing.JTable workRequestJTable;
+    private javax.swing.JButton processJButton;
+    private javax.swing.JButton refreshJButton;
+    private javax.swing.JTable shipmentRequestJTable;
     // End of variables declaration//GEN-END:variables
 }

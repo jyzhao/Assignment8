@@ -1,6 +1,5 @@
 package Business.Organization;
 
-import Business.Role.SalesSpecialistRole;
 import Business.Role.Role;
 import Business.Role.SupplierRole;
 import java.util.ArrayList;

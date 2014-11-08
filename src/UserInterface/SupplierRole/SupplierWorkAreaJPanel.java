@@ -1,12 +1,10 @@
 
 package UserInterface.SupplierRole;
 
-import UserInterface.CustomerRole.*;
 import Business.Business;
-import Business.Organization.CustomerOrganization;
 import Business.Organization.SupplierOrganization;
 import Business.UserAccount.UserAccount;
-import Business.WorkQueue.LabTestWorkRequest;
+import Business.WorkQueue.EnrollmentWorkRequest;
 import Business.WorkQueue.WorkRequest;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
@@ -20,7 +18,7 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
 
     JPanel userProcessContainer;
     UserAccount ua;
-    CustomerOrganization org;
+    SupplierOrganization org;
     Business business;
     
     public SupplierWorkAreaJPanel(JPanel userProcessContainer, UserAccount account, SupplierOrganization organization, Business business) {
@@ -30,11 +28,11 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
         this.org = org;
         this.business = business;
     
-        displayWorkRequest();
+        displayEnrollmentRequest();
     }
 
-    private void displayWorkRequest(){
-        DefaultTableModel dtm = (DefaultTableModel) workRequestJTable.getModel();
+    private void displayEnrollmentRequest(){
+        DefaultTableModel dtm = (DefaultTableModel) enrollmentRequestJTable.getModel();
         dtm.setRowCount(0);
         
         for (WorkRequest wr : ua.getWorkQueue().getWorkRequestList()) {
@@ -43,8 +41,8 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
             row[1] = wr.getReceiver();
             row[2] = wr.getStatus();
             
-            LabTestWorkRequest labReq = (LabTestWorkRequest) wr;
-            String result = labReq.getTestResult();
+            EnrollmentWorkRequest enrollReq = (EnrollmentWorkRequest) wr;
+            String result = enrollReq.getEnrollmentResult();
             row[3] = (result == null) ? ("N/A") : (result);
             
             dtm.addRow(row);
@@ -62,12 +60,14 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        workRequestJTable = new javax.swing.JTable();
-        requestTestJButton = new javax.swing.JButton();
+        enrollmentRequestJTable = new javax.swing.JTable();
+        requestEnrollmentJButton = new javax.swing.JButton();
         refreshTestJButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        managePButton = new javax.swing.JButton();
+        reportButton = new javax.swing.JButton();
 
-        workRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
+        enrollmentRequestJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -93,18 +93,18 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(workRequestJTable);
-        if (workRequestJTable.getColumnModel().getColumnCount() > 0) {
-            workRequestJTable.getColumnModel().getColumn(0).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(1).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(2).setResizable(false);
-            workRequestJTable.getColumnModel().getColumn(3).setResizable(false);
+        jScrollPane1.setViewportView(enrollmentRequestJTable);
+        if (enrollmentRequestJTable.getColumnModel().getColumnCount() > 0) {
+            enrollmentRequestJTable.getColumnModel().getColumn(0).setResizable(false);
+            enrollmentRequestJTable.getColumnModel().getColumn(1).setResizable(false);
+            enrollmentRequestJTable.getColumnModel().getColumn(2).setResizable(false);
+            enrollmentRequestJTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
-        requestTestJButton.setText("Request Test");
-        requestTestJButton.addActionListener(new java.awt.event.ActionListener() {
+        requestEnrollmentJButton.setText("Request Enrollment");
+        requestEnrollmentJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                requestTestJButtonActionPerformed(evt);
+                requestEnrollmentJButtonActionPerformed(evt);
             }
         });
 
@@ -117,58 +117,100 @@ public class SupplierWorkAreaJPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Supplier Role");
 
+        managePButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        managePButton.setText("Manage Product Catalog >>");
+        managePButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                managePButtonActionPerformed(evt);
+            }
+        });
+
+        reportButton.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        reportButton.setText("Review Product Performance >>");
+        reportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reportButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(192, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(165, 165, 165))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(requestTestJButton)
-                        .addGap(86, 86, 86))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(150, 150, 150)
-                        .addComponent(refreshTestJButton)
-                        .addGap(103, 103, 103))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(192, 192, 192)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(managePButton)
+                            .addComponent(reportButton)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(174, 174, 174)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(requestEnrollmentJButton)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(refreshTestJButton))))
+                .addContainerGap(190, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(344, 344, 344))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(refreshTestJButton)
-                    .addComponent(jLabel1))
+                .addGap(37, 37, 37)
+                .addComponent(jLabel1)
                 .addGap(18, 18, 18)
+                .addComponent(managePButton)
+                .addGap(42, 42, 42)
+                .addComponent(reportButton)
+                .addGap(46, 46, 46)
+                .addComponent(refreshTestJButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45)
-                .addComponent(requestTestJButton)
-                .addContainerGap(183, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(requestEnrollmentJButton)
+                .addContainerGap(29, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void requestTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestTestJButtonActionPerformed
+    private void requestEnrollmentJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestEnrollmentJButtonActionPerformed
 
-        RequestLabTestJPanel rltjp = new RequestLabTestJPanel(userProcessContainer,ua,Business.getInstance());
-        userProcessContainer.add("ReqTestJP",rltjp);
+        RequestEnrollmentJPanel rejp = new RequestEnrollmentJPanel(userProcessContainer,ua,Business.getInstance());
+        userProcessContainer.add("ReqEnrollJP",rejp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
-    }//GEN-LAST:event_requestTestJButtonActionPerformed
+    }//GEN-LAST:event_requestEnrollmentJButtonActionPerformed
 
     private void refreshTestJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshTestJButtonActionPerformed
 
-        displayWorkRequest();
+        displayEnrollmentRequest();
     }//GEN-LAST:event_refreshTestJButtonActionPerformed
 
+    private void managePButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_managePButtonActionPerformed
+        // TODO add your handling code here:
+        ManageProductCatalogJPanel mpcjp = new ManageProductCatalogJPanel(userProcessContainer/*, supplier*/);
+        userProcessContainer.add("ManageProductCatalogJPanel",mpcjp);
+        CardLayout layout = (CardLayout)userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_managePButtonActionPerformed
+
+    private void reportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reportButtonActionPerformed
+        // TODO add your handling code here:
+        ProductReportJPanel prjp = new ProductReportJPanel(userProcessContainer/*, supplier*/);
+        userProcessContainer.add("ProductReportJPanelSupplier", prjp);
+        CardLayout layout = (CardLayout)userProcessContainer.getLayout();
+        layout.next(userProcessContainer);
+    }//GEN-LAST:event_reportButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable enrollmentRequestJTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton managePButton;
     private javax.swing.JButton refreshTestJButton;
-    private javax.swing.JButton requestTestJButton;
-    private javax.swing.JTable workRequestJTable;
+    private javax.swing.JButton reportButton;
+    private javax.swing.JButton requestEnrollmentJButton;
     // End of variables declaration//GEN-END:variables
 }
